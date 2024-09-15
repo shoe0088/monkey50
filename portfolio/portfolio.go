@@ -7,9 +7,12 @@ import (
 )
 
 type Portfolio struct {
+	InitialBudget        float64    // 初期予算 CAD
 	Budget        float64    // 予算 CAD
 	Cash         float64    // 残高 CAD
 	Stocks [] Stock  // 持株情報
+	Start  time.Time // 開始日
+	End  time.Time // 終了日
 }
 
 type Stock struct {
@@ -19,9 +22,9 @@ type Stock struct {
 }
 
 func (p *Portfolio) Buy(market market.Market) {
-	amount := p.Budget/5/market.Close
+	amount := p.Budget/4/market.Close
 	total := market.Close*amount
-	if p.Cash < total {
+	if p.Cash < total || total < 1 {
 		return
 	}
 
@@ -47,6 +50,7 @@ func (p *Portfolio) Sell(market market.Market) {
 
 	profit := market.Close*float64(totalAmount)
 	p.Cash += profit
+	p.Budget = p.Cash
 	p.Stocks = []Stock{}
 	p.Report()
 }
@@ -76,8 +80,10 @@ func (p Portfolio) Report() {
 	totalPrice += p.Cash
 
 	fmt.Println("==== Portfolio Report ====")
-	fmt.Printf("予算 (Budget): %.2f CAD\n", p.Budget)
-	fmt.Printf("残高 (Cash): %.2f CAD\n", p.Cash)
+	fmt.Printf("対象期間: %s ~ %s\n", p.Start.Format("2006-01-02"), p.End.Format("2006-01-02"))
+	fmt.Printf("初期予算 (InitialBudget): %.2f $\n", p.InitialBudget)
+	fmt.Printf("予算 (Budget): %.2f $\n", p.Budget)
+	fmt.Printf("残高 (Cash): %.2f $\n", p.Cash)
 
 	if len(p.Stocks) == 0 {
 		fmt.Println("持株がありません。")
@@ -86,13 +92,13 @@ func (p Portfolio) Report() {
 		for i, stock := range p.Stocks {
 			fmt.Printf("  株 #%d\n", i+1)
 			fmt.Printf("    購入日: %s\n", stock.Date.Format("2006-01-02"))
-			fmt.Printf("    取得単価: %.2f CAD\n", stock.Price)
+			fmt.Printf("    取得単価: %.2f $\n", stock.Price)
 			fmt.Printf("    購入数: %d\n", stock.Amount)
 		}
-		fmt.Printf("    平均取得単価: %.2f\n", p.AveragePrice())
+		fmt.Printf("  平均取得単価: %.2f\n", p.AveragePrice())
 	}
 
-	fmt.Printf("総資産: %.2f ％ \n", totalPrice)
-	fmt.Printf("上昇率: %.2f ％ \n", totalPrice/p.Budget*100)
+	fmt.Printf("総資産: %.2f $\n", totalPrice)
+	fmt.Printf("上昇率: %.2f ％ \n", totalPrice/p.InitialBudget*100)
 	fmt.Println("==========================")
 }

@@ -11,8 +11,8 @@ func CanBuy(market market.Market, portfolio portfolio.Portfolio) bool {
 			return true
 		}
 	} else {
-		lastStock := portfolio.Stocks[len(portfolio.Stocks)-1]
-		if lastStock.Price*0.9 > market.Close {
+		firstStock := portfolio.Stocks[0]
+		if firstStock.Price*(1.0-0.1*float64(len(portfolio.Stocks))) > market.Close {
 			return true
 		}
 	}
@@ -25,7 +25,7 @@ func CanSell(market market.Market, portfolio portfolio.Portfolio) bool {
 		return false
 	}
 
-	if portfolio.AveragePrice()*1.5 < market.Close {
+	if portfolio.AveragePrice()*1.22 < market.Close {
 		return true
 	}
 

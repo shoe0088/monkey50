@@ -10,6 +10,7 @@ import (
 func main() {
 	filePath := "soxl.csv"
 	p := portfolio.Portfolio{
+		InitialBudget: 200000,
 		Budget: 200000,
 		Cash:   200000,
 	}
@@ -25,5 +26,7 @@ func main() {
 		}
 	}
 
+	p.Start = markets[0].Date
+	p.End = markets[len(markets)-1].Date
 	p.Report()
 }
