@@ -52,7 +52,7 @@ func (p *Portfolio) Sell(market market.Market) {
 	for _, s := range p.Stocks {
 		totalAmount += s.Amount
 	}
-	targetPrice := p.AveragePrice()*1.22
+	targetPrice := p.AveragePrice()*1.23
 
 	profit := targetPrice*float64(totalAmount)
 	p.Cash += profit
@@ -85,6 +85,7 @@ func (p Portfolio) Report(market market.Market) {
 	}
 	totalPrice += p.Cash
 
+	p.End = market.Date
 	fmt.Println("==== Portfolio Report ====")
 	fmt.Printf("対象期間: %s ~ %s\n", p.Start.Format("2006-01-02"), p.End.Format("2006-01-02"))
 	fmt.Printf("初期予算 (InitialBudget): %.2f $\n", p.InitialBudget)
@@ -102,6 +103,7 @@ func (p Portfolio) Report(market market.Market) {
 			fmt.Printf("    購入数: %d\n", stock.Amount)
 		}
 		fmt.Printf("  平均取得単価: %.2f\n", p.AveragePrice())
+		fmt.Printf("  RSI: %.2f\n", market.RSI)
 	}
 
 	fmt.Printf("総資産: %.2f $\n", totalPrice)

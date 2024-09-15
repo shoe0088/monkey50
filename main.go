@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"monkey50/planner"
 	"monkey50/portfolio"
 	"monkey50/printer"
@@ -15,9 +14,9 @@ func main() {
 		Cash:   200000,
 	}
 	markets, _ := printer.ImportCSV(filePath)
+	p.Start = markets[0].Date
 
 	for _, m := range markets {
-		fmt.Printf("%s \n", m.Date)
 		if planner.CanBuy(m, p) {
 			p.Buy(m)
 		}
@@ -26,7 +25,5 @@ func main() {
 		}
 	}
 
-	p.Start = markets[0].Date
-	p.End = markets[len(markets)-1].Date
 	p.Report(markets[len(markets)-1])
 }
