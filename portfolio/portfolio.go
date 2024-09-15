@@ -22,20 +22,25 @@ type Stock struct {
 }
 
 func (p *Portfolio) Buy(market market.Market) {
-	amount := p.Budget/4/market.Close
-	total := market.Close*amount
+	targetPrice := market.Close
+	if len(p.Stocks) > 0 {
+		targetPrice = p.Stocks[0].Price*(1.0-0.1*float64(len(p.Stocks)))
+	}
+
+	amount := p.Budget/4/targetPrice
+	total := targetPrice*amount
 	if p.Cash < total || total < 1 {
 		return
 	}
 
 	stock := Stock{
 		Date: market.Date,
-		Price: market.Close,
+		Price: targetPrice,
 		Amount: int(amount),
 	}
 	p.Stocks = append(p.Stocks, stock)
 	p.Cash = p.Cash - total
-	p.Report()
+	p.Report(market)
 }
 
 func (p *Portfolio) Sell(market market.Market) {
@@ -47,12 +52,13 @@ func (p *Portfolio) Sell(market market.Market) {
 	for _, s := range p.Stocks {
 		totalAmount += s.Amount
 	}
+	targetPrice := p.AveragePrice()*1.22
 
-	profit := market.Close*float64(totalAmount)
+	profit := targetPrice*float64(totalAmount)
 	p.Cash += profit
 	p.Budget = p.Cash
 	p.Stocks = []Stock{}
-	p.Report()
+	p.Report(market)
 }
 
 func (p *Portfolio) AveragePrice() float64 {
@@ -72,10 +78,10 @@ func (p *Portfolio) AveragePrice() float64 {
 }
 
 // Report はPortfolioの内容を標準出力に出力する関数です
-func (p Portfolio) Report() {
+func (p Portfolio) Report(market market.Market) {
 	var totalPrice float64
 	for _, stock := range p.Stocks {
-		totalPrice += stock.Price * float64(stock.Amount)
+		totalPrice += market.Close * float64(stock.Amount)
 	}
 	totalPrice += p.Cash
 

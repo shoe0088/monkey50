@@ -28,5 +28,5 @@ func main() {
 
 	p.Start = markets[0].Date
 	p.End = markets[len(markets)-1].Date
-	p.Report()
+	p.Report(markets[len(markets)-1])
 }
