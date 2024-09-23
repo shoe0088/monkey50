@@ -7,11 +7,11 @@ import (
 )
 
 func main() {
-	filePath := "soxl.csv"
+	filePath := "soxl_2014.csv"
 	p := portfolio.Portfolio{
-		InitialBudget: 200000,
-		Budget: 200000,
-		Cash:   200000,
+		InitialBudget: 220000,
+		Budget: 220000,
+		Cash:   220000,
 	}
 	markets, _ := printer.ImportCSV(filePath)
 	p.Start = markets[0].Date

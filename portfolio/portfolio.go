@@ -28,8 +28,8 @@ func (p *Portfolio) Buy(market market.Market) {
 	}
 
 	amount := p.Budget/4/targetPrice
-	total := targetPrice*amount
-	if p.Cash < total || total < 1 {
+	total := targetPrice*(amount - 1)  // floatの誤差でCashを超えてしまうので応急処置
+	if p.Cash <= total || total < 1 {
 		return
 	}
 
